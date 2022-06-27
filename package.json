@@ -1,0 +1,26 @@
+{
+  "name": "thomas parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ajv": "^8.6.2",
+    "buffer": "^6.0.3",
+    "csv-parser": "^3.0.0",
+    "dotenv": "^10.0.0",
+    "lodash": "^4.17.21",
+    "mongoose": "^6.0.9",
+    "node-fetch": "^2.6.1",
+    "node-wget-promise": "^0.1.6",
+    "npmlog": "^5.0.0",
+    "requests": "^0.3.0",
+    "streaming": "^1.1.0",
+    "sync-request": "^6.1.0",
+    "wget-improved": "^3.2.1",
+    "yargs": "^17.1.0"
+  },
+  "type": "module"
+}
