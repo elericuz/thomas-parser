@@ -16,3 +16,4 @@ webpack.config.js
 .dockerignore
 *.env
 files/*
+*.sh

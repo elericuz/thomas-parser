@@ -7,11 +7,10 @@ import {sendTransaction} from "../models/model.js";
 const _ = lodash;
 
 export async function get(file = null) {
-
-    const jsonDirPath = process.cwd();
-    const jsonFile = jsonDirPath + '/' + file;
+    const jsonFile = file;
     let rawdata = fs.readFileSync(jsonFile);
 
+    let transactions = [];
     let items = [];
     try {
         let transactions = JSON.parse(rawdata);
@@ -24,27 +23,32 @@ export async function get(file = null) {
     for (let item of items) {
         let dateString = item.fecha + " " + item.hora;
         let date = new Date(dateString)
-        const userTimezoneOffset = date.getTimezoneOffset() * 60000;
 
         let transaction = {
-            date: new Date(date.getTime() - userTimezoneOffset),
-            name_station: _.toLower(Buffer.from(item.station_name, "utf-8").toString()),
-            reference_id: escape(item.reference_id),
-            operation_type: escape(_.toLower(item.operation_type)),
-            sw_serial_number: escape(item.sw_serial_number),
-            media_serial_number: escape(item.media_serial_number),
-            amount: _.toNumber(item.amount),
-            purse: _.toNumber(item.pd_purse),
-            fare: escape(_.toLower(item.fare_name))
+            date: new Date(date.getTime()),
+            name_station: _.toLower(Buffer.from(item.estacion, "utf-8").toString()),
+            terminal: _.toLower(item.equipo),
+            operation_type: _.toLower(item.tipo_operacion),
+            external_number: _.toLower(item.nro_externo),
+            internal_number: _.parseInt(item.nro_interno),
+            card_transaction_number: _.parseInt(item.num_trx_tarjeta),
+            former_purse: _.isNumber(item.saldo_anterior) ? _.toNumber(item.saldo_anterior) : 0,
+            amount: _.toNumber(item.importe),
+            purse: _.isNumber(item.saldo_actual) ? _.toNumber(item.saldo_actual) : 0,
+            document_id: _.isEmpty(_.trim(item.dni)) ? "0" : _.trim(item.dni),
+            fare: _.toLower(item.perfil)
         }
 
-        if (model.validateData([transaction])) {
-            sendTransaction([transaction])
+        if (model.validateData([transaction])
+        ) {
+            transactions.push(transaction)
+            log.info("Validating " + transaction.document_id + " : " + transaction.internal_number)
+        } else {
+            log.warn("Error Validating " + transaction.document_id + " : " + transaction.internal_number)
         }
-
-        return false;
     }
 
-    console.log(jsonFile);
+    sendTransaction(transactions)
+
     return false;
 }
