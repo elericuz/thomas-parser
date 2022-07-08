@@ -24,7 +24,6 @@ export async function get(file = null) {
 
     for (let item of items) {
         let dateString = item.fecha + " " + item.hora;
-        let date = moment(new Date(dateString)).add(process.env.ADD_HOURS, 'hours').tz("America/Lima").format();
 
         let former_purse = 0
         if (/(^[\d]*)((\.)([\d]){1,2})?$/.test(item.saldo_anterior)) {
@@ -37,7 +36,7 @@ export async function get(file = null) {
         }
 
         let transaction = {
-            date: date,
+            date: moment(new Date(dateString)).add(process.env.ADD_HOURS, 'hours').tz("America/Lima").format(),
             name_station: _.toLower(Buffer.from(item.estacion, "utf-8").toString()),
             terminal: _.toLower(item.equipo),
             operation_type: _.toLower(item.tipo_operacion),
