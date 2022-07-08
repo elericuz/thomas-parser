@@ -1,6 +1,8 @@
 import log from "npmlog";
 import fs from 'fs';
 import lodash from 'lodash';
+import moment from 'moment';
+import tz from 'moment-timezone';
 import * as model from "../models/model.js";
 import {sendTransaction} from "../models/model.js";
 
@@ -22,7 +24,7 @@ export async function get(file = null) {
 
     for (let item of items) {
         let dateString = item.fecha + " " + item.hora;
-        let date = new Date(dateString)
+        let date = moment(new Date(dateString)).add(process.env.ADD_HOURS, 'hours').tz("America/Lima").format();
 
         let former_purse = 0
         if (/(^[\d]*)((\.)([\d]){1,2})?$/.test(item.saldo_anterior)) {
