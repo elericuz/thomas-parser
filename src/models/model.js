@@ -74,6 +74,7 @@ export async function sendTransaction(data) {
             transactionData.append("operation_type", transaction.operation_type)
             transactionData.append("external_number", transaction.external_number)
             transactionData.append("internal_number", transaction.internal_number)
+            transactionData.append("card_transaction_number", transaction.card_transaction_number)
             transactionData.append("former_purse", transaction.former_purse)
             transactionData.append("amount", transaction.amount)
             transactionData.append("purse", transaction.purse)
