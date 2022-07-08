@@ -37,7 +37,7 @@ export async function get(file = null) {
         }
 
         let transaction = {
-            date: new Date(date.getTime()),
+            date: date,
             name_station: _.toLower(Buffer.from(item.estacion, "utf-8").toString()),
             terminal: _.toLower(item.equipo),
             operation_type: _.toLower(item.tipo_operacion),
