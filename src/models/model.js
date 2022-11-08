@@ -21,7 +21,8 @@ const schema = {
             amount: {type: "number"},
             purse: {type: "number"},
             document_id: {type: "string"},
-            fare: {type: "string"}
+            fare: {type: "string"},
+            json_file: {type: "string"}
         },
         required: [
             "date",
@@ -51,7 +52,7 @@ export function validateData(data) {
 }
 
 export async function sendTransaction(data) {
-    log.info('Sending transactions to the endoint...');
+    log.info('Sending transactions to the endpoint...');
     const endpoint = process.env.ENDPOINT + "/transactions/add/";
 
     const method = "POST"
@@ -80,6 +81,7 @@ export async function sendTransaction(data) {
             transactionData.append("purse", transaction.purse)
             transactionData.append("document_id", transaction.document_id)
             transactionData.append("fare", transaction.fare)
+            transactionData.append("json_file", transaction.json_file)
 
             var params = new URLSearchParams(transactionData)
 

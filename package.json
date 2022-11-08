@@ -22,7 +22,8 @@
     "streaming": "^1.1.0",
     "sync-request": "^6.1.0",
     "wget-improved": "^3.2.1",
-    "yargs": "^17.1.0"
+    "yargs": "^17.1.0",
+    "path": "^0.12.7"
   },
   "type": "module"
 }

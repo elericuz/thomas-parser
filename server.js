@@ -10,8 +10,6 @@ log.info = console.log;
 log.error = console.error;
 log.debug = console.debug;
 
-log.info("Crawling...");
-
 globalThis.argv = yargs(process.argv.slice(2))
     .option("file", {
         alias: "f",
@@ -24,7 +22,6 @@ globalThis.argv = yargs(process.argv.slice(2))
 if (!argv.debug) log.pause();
 
 let data = [];
-log.info("Parsing new data");
 dotenv.config({path: 'settings.env'});
 parser.get(argv.file);
 

@@ -5,11 +5,20 @@ import moment from 'moment';
 import tz from 'moment-timezone';
 import * as model from "../models/model.js";
 import {sendTransaction} from "../models/model.js";
+import path from "path";
 
 const _ = lodash;
 
 export async function get(file = null) {
     const jsonFile = file;
+
+    if (!fs.existsSync(jsonFile)) {
+        return false;
+    }
+
+    log.info("Crawling...");
+    log.info("Parsing new data");
+
     let rawdata = fs.readFileSync(jsonFile);
 
     let transactions = [];
@@ -20,6 +29,7 @@ export async function get(file = null) {
     } catch (e) {
         log.warn(`Error while parsing file ${jsonFile}`);
         log.warn(e);
+        return false;
     }
 
     for (let item of items) {
@@ -47,7 +57,8 @@ export async function get(file = null) {
             amount: _.toNumber(item.importe),
             purse: purse,
             document_id: _.isEmpty(_.trim(item.dni)) ? "0" : _.trim(item.dni),
-            fare: _.toLower(item.perfil)
+            fare: _.toLower(item.perfil),
+            json_file: path.basename(file)
         }
 
         if (model.validateData([transaction])
@@ -58,6 +69,7 @@ export async function get(file = null) {
             log.warn("Error Validating " + transaction.document_id + " : " + transaction.internal_number)
         }
     }
+    log.info("File being processed: " + path.basename(file));
 
     sendTransaction(transactions)
 
