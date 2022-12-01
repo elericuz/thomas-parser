@@ -17,3 +17,5 @@ webpack.config.js
 *.env
 files/*
 *.sh
+
+log/

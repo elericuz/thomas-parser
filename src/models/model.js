@@ -2,6 +2,20 @@ import fetch from "node-fetch";
 import log from "npmlog";
 import lodash from 'lodash';
 import Ajv from "ajv";
+import { createLogger, format, transports } from 'winston';
+
+const { combine, timestamp, label, prettyPrint } = format;
+const logger = createLogger({
+    format: combine(
+        label({ label: 'Model' }),
+        timestamp(),
+        prettyPrint()
+    ),
+    transports: [
+        new transports.File({ filename: 'log/error.log', level: 'error'}),
+        new transports.File({ filename: 'log/combined.log'})
+    ]
+})
 
 const ajv = new Ajv();
 const _ = lodash;
@@ -47,6 +61,14 @@ export function validateData(data) {
     } else {
         log.error('Err', 'Something went wrong!');
         log.error('Err', ajv.errors);
+
+        let message = {
+            message: "Something went wrong. Invalida Data",
+            error: ajv.errors
+        }
+
+        logger.error(message)
+
         return false;
     }
 }
@@ -90,8 +112,23 @@ export async function sendTransaction(data) {
                     let nowInJson = {};
                     try {
                         nowInJson = response.json();
+
+                        logger.info({
+                            message: "Transaction sent",
+                            data: transaction
+                        })
+
+
                     } catch (e) {
                         log.error(e)
+
+                        let message = {
+                            message: "Something went wrong. Bad answer from the endpoint",
+                            error: e.message,
+                            params: transaction
+                        }
+
+                        logger.error(message)
                     }
                     return nowInJson;
                 })
@@ -99,11 +136,27 @@ export async function sendTransaction(data) {
                     if (!_.isUndefined(result.detail)) {
                         log.warn(`Could not save: ${JSON.stringify(dataSet)}`);
                         log.warn(result.detail);
+
+                        let message = {
+                            message: "Something went wrong. Could not save",
+                            error: result.detail,
+                            dataset: transaction
+                        }
+
+                        logger.error(message)
                     }
                 })
                 .catch(err => {
                     log.error('Something went wrong!');
                     log.error(err);
+
+                    let message = {
+                        message: "Something went wrong. We couldn't send to the endpoint",
+                        error: err.message,
+                        params: transaction
+                    }
+
+                    logger.error(message)
                 });
         }
     }

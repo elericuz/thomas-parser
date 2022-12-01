@@ -7,12 +7,34 @@ import * as model from "../models/model.js";
 import {sendTransaction} from "../models/model.js";
 import path from "path";
 
+import { createLogger, format, transports } from 'winston';
+
+const { combine, timestamp, label, prettyPrint } = format;
+const logger = createLogger({
+    format: combine(
+        label({ label: 'Parser' }),
+        timestamp(),
+        prettyPrint()
+    ),
+    transports: [
+        new transports.File({ filename: 'log/error.log', level: 'error'}),
+        new transports.File({ filename: 'log/combined.log'})
+    ]
+})
+
 const _ = lodash;
 
 export async function get(file = null) {
     const jsonFile = file;
 
     if (!fs.existsSync(jsonFile)) {
+        let message = {
+            message: "Something went wrong",
+            error: "We couldn't find the file",
+            file: file
+        }
+
+        logger.error(message)
         return false;
     }
 
@@ -29,6 +51,14 @@ export async function get(file = null) {
     } catch (e) {
         log.warn(`Error while parsing file ${jsonFile}`);
         log.warn(e);
+
+        let message = {
+            message: "Something went wrong. We couldn't parse the file",
+            error: e.message,
+            file: file
+        }
+
+        logger.error(message)
         return false;
     }
 
