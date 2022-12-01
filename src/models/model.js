@@ -64,7 +64,8 @@ export function validateData(data) {
 
         let message = {
             message: "Something went wrong. Invalida Data",
-            error: ajv.errors
+            error: ajv.errors,
+            data: data
         }
 
         logger.error(message)
